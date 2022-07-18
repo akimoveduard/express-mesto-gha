@@ -5,7 +5,7 @@ const {
   getUsers,
   getUser,
   updateUser,
-  updateAvatar
+  updateAvatar,
 } = require('../controllers/users');
 
 routesUsers.post('/users', createUser);

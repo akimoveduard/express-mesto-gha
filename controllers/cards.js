@@ -2,7 +2,7 @@ const {
   DEFAULT_ERROR_CODE,
   VALIDATION_ERROR_CODE,
   NOTFOUND_ERROR_CODE,
-  DEFAULT_ERROR_MESSAGE
+  DEFAULT_ERROR_MESSAGE,
 } = require('../utils/errors');
 
 const Card = require('../models/card');
@@ -56,9 +56,10 @@ const deleteCard = (req, res) => {
 };
 
 const likeCard = (req, res) => {
-  Card.findByIdAndUpdate(req.params.cardId,
+  Card.findByIdAndUpdate(
+    req.params.cardId,
     { $addToSet: { likes: req.user._id } },
-    { new: true }
+    { new: true },
   )
     .then((card) => {
       if (!card) {
@@ -77,9 +78,10 @@ const likeCard = (req, res) => {
 };
 
 const deleteLike = (req, res) => {
-  Card.findByIdAndUpdate(req.params.cardId,
+  Card.findByIdAndUpdate(
+    req.params.cardId,
     { $pull: { likes: req.user._id } },
-    { new: true }
+    { new: true },
   )
     .then((card) => {
       if (!card) {
@@ -102,5 +104,5 @@ module.exports = {
   getCards,
   deleteCard,
   likeCard,
-  deleteLike
+  deleteLike,
 };
