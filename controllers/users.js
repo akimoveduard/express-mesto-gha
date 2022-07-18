@@ -26,7 +26,7 @@ const getUsers = (req, res) => {
   User.find({})
     .then((users) => {
       if (users.length === 0) {
-        res.status(NOTFOUND_ERROR_CODE).send({ message: '404 — Пользователи не найдены.'});
+        res.status(NOTFOUND_ERROR_CODE).send({ message: '404 — Пользователи не найдены.' });
         return;
       }
       res.status(200).send(users);
