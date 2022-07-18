@@ -1,19 +1,24 @@
-const User = require('../models/user');
+const {
+  DEFAULT_ERROR_CODE,
+  VALIDATION_ERROR_CODE,
+  NOTFOUND_ERROR_CODE,
+  DEFAULT_ERROR_MESSAGE
+} = require('../utils/errors');
 
-const defErrMsg = '500 — Внутренняя ошибка сервера';
+const User = require('../models/user');
 
 const createUser = (req, res) => {
   const { name, about, avatar } = req.body;
   User.create({ name, about, avatar })
     .then((user) => {
-      res.status(201).send(data: user);
+      res.status(201).send(user);
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(400).send({ message: '400 — Переданы некорректные данные при создании пользователя' });
+        res.status(VALIDATION_ERROR_CODE).send({ message: '400 — Переданы некорректные данные при создании пользователя.' });
         return;
       }
-      res.status(500).send({ message: `${defErrMsg}` });
+      res.status(DEFAULT_ERROR_CODE).send({ message: DEFAULT_ERROR_MESSAGE });
     });
 };
 
@@ -21,13 +26,13 @@ const getUsers = (req, res) => {
   User.find({})
     .then((users) => {
       if (users.length === 0) {
-        res.status(404).send({ message: '404 — Не найдено' });
+        res.status(NOTFOUND_ERROR_CODE).send({ message: '404 — Пользователи не найдены.'});
         return;
       }
-      res.status(200).send(data: users);
+      res.status(200).send(users);
     })
     .catch(() => {
-      res.status(500).send({ message: `${defErrMsg}` });
+      res.status(DEFAULT_ERROR_CODE).send({ message: DEFAULT_ERROR_MESSAGE });
     });
 };
 
@@ -35,12 +40,13 @@ const getUser = (req, res) => {
   User.findById(req.params.id)
     .then((user) => {
       if (!user) {
-        res.status(404).send({ message: '404 — Не найдено' });
+        res.status(NOTFOUND_ERROR_CODE).send({ message: '404 — Пользователь по указанному _id не найден.' });
+        return;
       }
-      res.status(200).send(data: user);
+      res.status(200).send(user);
     })
     .catch(() => {
-      res.status(500).send({ message: `${defErrMsg}` });
+      res.status(DEFAULT_ERROR_CODE).send({ message: DEFAULT_ERROR_MESSAGE });
     });
 };
 
@@ -55,10 +61,14 @@ const updateUser = (req, res) => {
     }
   )
     .then((user) => {
-      res.status(200).send(data: user);
+      res.status(200).send(user);
     })
     .catch((err) => {
-      res.status(500).send({ message: `${defErrMsg}` });
+      if (err.name === 'ValidationError') {
+        res.status(VALIDATION_ERROR_CODE).send({ message: '400 — Переданы некорректные данные при обновлении профиля.' });
+        return;
+      }
+      res.status(DEFAULT_ERROR_CODE).send({ message: DEFAULT_ERROR_MESSAGE });
     });
 };
 
@@ -73,10 +83,18 @@ const updateAvatar = (req, res) => {
     }
   )
     .then((user) => {
-      res.status(200).send(data: user);
+      if (!user) {
+        res.status(NOTFOUND_ERROR_CODE).send({ message: '404 — Пользователь с указанным _id не найден.' });
+        return;
+      }
+      res.status(200).send(user);
     })
     .catch((err) => {
-      res.status(500).send({ message: `${defErrMsg}`});
+      if (err.name === 'ValidationError') {
+        res.status(VALIDATION_ERROR_CODE).send({ message: '400 — Переданы некорректные данные при обновлении аватара.' });
+        return;
+      }
+      res.status(DEFAULT_ERROR_CODE).send({ message: DEFAULT_ERROR_MESSAGE });
     });
 };
 
