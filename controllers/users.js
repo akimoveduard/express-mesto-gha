@@ -32,10 +32,6 @@ const getUsers = (req, res) => {
       res.status(200).send(users);
     })
     .catch((err) => {
-      if (err.name === 'CastError') {
-        res.status(NOTFOUND_ERROR_CODE).send({ message: '400 — Переданы некорректные данные _id.' });
-        return;
-      }
       res.status(DEFAULT_ERROR_CODE).send({ message: DEFAULT_ERROR_MESSAGE });
     });
 };
@@ -51,7 +47,7 @@ const getUser = (req, res) => {
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(NOTFOUND_ERROR_CODE).send({ message: '400 — Переданы некорректные данные _id.' });
+        res.status(VALIDATION_ERROR_CODE).send({ message: '400 — Переданы некорректные данные _id.' });
         return;
       }
       res.status(DEFAULT_ERROR_CODE).send({ message: DEFAULT_ERROR_MESSAGE });

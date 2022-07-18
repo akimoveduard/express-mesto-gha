@@ -21,14 +21,14 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use((req, res, next) => {
   req.user = {
-    _id: '62d1798ea65418fede6e625d',
+    _id: '62d59ec8cf56e951d6f7ed3a',
   };
   next();
 });
 
-app.use('/', routesUsers);
+app.use('/users', routesUsers);
 
-app.use('/', routesCards);
+app.use('/cards', routesCards);
 
 app.use((req, res) => {
   res.status(NOTFOUND_ERROR_CODE).send({ message: 'Страница не найдена' });
