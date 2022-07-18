@@ -46,6 +46,10 @@ const getUser = (req, res) => {
       res.status(200).send(user);
     })
     .catch(() => {
+      if (err.name === 'CastError') {
+        res.status(NOTFOUND_ERROR_CODE).send({ message: '400 — Переданы некорректные данные _id.' });
+        return;
+      }
       res.status(DEFAULT_ERROR_CODE).send({ message: DEFAULT_ERROR_MESSAGE });
     });
 };

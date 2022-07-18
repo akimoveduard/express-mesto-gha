@@ -3,6 +3,10 @@ const mongoose = require('mongoose');
 
 const bodyParser = require('body-parser');
 
+const {
+  NOTFOUND_ERROR_CODE,
+} = require('./utils/errors');
+
 const routesUsers = require('./routes/users');
 const routesCards = require('./routes/cards');
 
@@ -22,8 +26,13 @@ app.use((req, res, next) => {
   next();
 });
 
+
 app.use('/', routesUsers);
 
 app.use('/', routesCards);
+
+app.use((req, res) => {
+  res.status(NOTFOUND_ERROR_CODE).send({ message: 'Страница не найдена' });
+});
 
 app.listen(PORT);
