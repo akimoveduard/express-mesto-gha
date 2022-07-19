@@ -45,7 +45,7 @@ const deleteCard = (req, res) => {
         res.status(NOTFOUND_ERROR_CODE).send({ message: '404 — Передан несуществующий _id карточки.' });
         return;
       }
-      res.status(200).send(card);
+      res.status(NOTFOUND_ERROR_CODE).send({ message: '404 — Передан несуществующий _id карточки.' });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
