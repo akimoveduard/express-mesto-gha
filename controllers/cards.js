@@ -46,7 +46,7 @@ const deleteCard = (req, res) => {
         return;
       }
       card.remove();
-      return (card);
+      res.send({ message: 'delete' });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
