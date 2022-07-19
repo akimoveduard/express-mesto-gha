@@ -10,8 +10,8 @@ const userSchema = new mongoose.Schema({
   about: {
     type: String,
     required: [true, 'Поле {PATH} не может быть пустым.'],
-    minlength: [2, 'в профиле должно быть минимум два символа.'],
-    maxlength: [30, 'в профиле может быть максимум 30 символов.'],
+    minlength: [2, 'Поле {PATH} должно быть минимум два символа.'],
+    maxlength: [30, 'Поле {PATH} может быть максимум 30 символов.'],
   },
   avatar: {
     type: String,
