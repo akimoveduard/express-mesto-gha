@@ -47,6 +47,7 @@ const deleteCard = (req, res) => {
       }
       res.status(200).send(card);
     })
+    .then((card) => card.remove())
     .catch((err) => {
       if (err.name === 'CastError') {
         res.status(VALIDATION_ERROR_CODE).send({ message: '400 — Переданы некорректные данные _id для удаления карточки.' });
