@@ -3,13 +3,13 @@ const mongoose = require('mongoose');
 const cardSchema = new mongoose.Schema({
   name: {
     type: String,
-    required: true,
-    minlength: 2,
-    maxlength: 30,
+    required: [true, 'Поле {PATH} не может быть пустым.'],
+    minlength: [2, 'Поле {PATH} должно содержать минимум два символа.'],
+    maxlength: [30, 'Поле {PATH} может содержать максимум 30 символов.'],
   },
   link: {
     type: String,
-    required: true,
+    required: [true, 'Поле {PATH} не может быть пустым.'],
   },
   owner: {
     type: mongoose.Schema.Types.ObjectId,
@@ -18,6 +18,7 @@ const cardSchema = new mongoose.Schema({
   },
   likes: [{
     type: mongoose.Schema.Types.ObjectId,
+    ref: 'user',
     default: [],
   }],
   createdAt: {

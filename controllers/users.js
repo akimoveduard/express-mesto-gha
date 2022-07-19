@@ -15,7 +15,8 @@ const createUser = (req, res) => {
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(VALIDATION_ERROR_CODE).send({ message: '400 — Переданы некорректные данные при создании пользователя.' });
+        res.status(VALIDATION_ERROR_CODE).send({
+          message: `400 — Переданы некорректные данные при создании пользователя. ${Object.values(err.errors).map((error) => error.message).join(' ')}` });
         return;
       }
       res.status(DEFAULT_ERROR_CODE).send({ message: DEFAULT_ERROR_MESSAGE });
@@ -43,7 +44,7 @@ const getUser = (req, res) => {
         res.status(NOTFOUND_ERROR_CODE).send({ message: '404 — Пользователь по указанному _id не найден.' });
         return;
       }
-      res.status(200).send(user);
+      res.send(user);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
