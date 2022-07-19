@@ -38,13 +38,13 @@ const getCards = (req, res) => {
 };
 
 const deleteCard = (req, res) => {
-  Card.findByIdAndRemove(req.params.cardId)
+  Card.findById(req.params.cardId)
     .then((card) => {
       if (!card) {
         res.status(NOTFOUND_ERROR_CODE).send({ message: '404 — Передан несуществующий _id карточки.' });
         return;
       }
-      res.status(200).send(card);
+      Card.findByIdAndDelete(req.params.cardId);
     })
     .catch((err) => {
       if (err.name === 'CastError') {

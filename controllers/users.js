@@ -31,7 +31,7 @@ const getUsers = (req, res) => {
       }
       res.status(200).send(users);
     })
-    .catch((err) => {
+    .catch(() => {
       res.status(DEFAULT_ERROR_CODE).send({ message: DEFAULT_ERROR_MESSAGE });
     });
 };
