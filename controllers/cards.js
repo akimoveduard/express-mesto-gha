@@ -39,7 +39,7 @@ const getCards = (req, res) => {
 
 const deleteCard = (req, res) => {
   const { cardId } = req.params;
-  Card.findByIdAndDelete(cardId)
+  Card.findByIdAndRemove(cardId)
     .then((card) => {
       if (!card) {
         res.status(NOTFOUND_ERROR_CODE).send({ message: '404 — Передан несуществующий _id карточки.' });
