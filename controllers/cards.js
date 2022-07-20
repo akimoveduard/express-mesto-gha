@@ -31,7 +31,7 @@ const getCards = (req, res) => {
   Card.find({})
     .then((cards) => {
       if (cards.length === 0) {
-        res.status(NOTFOUND_ERROR_CODE).send({ message: '404 — Карточки не найдены.' });
+        res.status(200).send({ });
         return;
       }
       res.status(200).send(cards);
