@@ -30,10 +30,6 @@ const createCard = (req, res) => {
 const getCards = (req, res) => {
   Card.find({})
     .then((cards) => {
-      if (cards.length === 0) {
-        res.status(200).send({ });
-        return;
-      }
       res.status(200).send(cards);
     })
     .catch(() => {
