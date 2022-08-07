@@ -30,7 +30,12 @@ const createUser = (req, res, next) => {
         about,
         avatar,
       })
-        .then((user) => res.status(201).send(user))
+        .then((user) => res.status(201).send({
+          email: user.email,
+          name: user.name,
+          about: user.about,
+          avatar: user.avatar,
+        }))
         .catch((error) => {
           if (error.name === 'ValidationError') {
             next(new ErrorBadRequest('Переданы невалидные данные для регистрации пользователя.'));
