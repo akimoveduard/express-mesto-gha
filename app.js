@@ -1,16 +1,20 @@
 const express = require('express');
 const mongoose = require('mongoose');
 
+const { celebrate, Joi, errors } = require('celebrate');
+
 const bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser');
 
-const {
-  NOTFOUND_ERROR_CODE,
-} = require('./utils/errors');
+const auth = require('./middlewares/auth');
+const handleErrors = require('./middlewares/handle-errors');
 
-const routesUsers = require('./routes/users');
-const routesCards = require('./routes/cards');
+const usersRoutes = require('./routes/users');
+const cardsRoutes = require('./routes/cards');
 
 const app = express();
+
+app.use(cookieParser());
 
 const { PORT = 3000 } = process.env;
 
@@ -19,18 +23,32 @@ mongoose.connect('mongodb://localhost:27017/mestodb');
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-app.use((req, res, next) => {
-  req.user = {
-    _id: '62d59ec8cf56e951d6f7ed3a',
-  };
-  next();
-});
+const { createUser, login } = require('./controllers/users');
 
-app.use('/', routesUsers);
-app.use('/cards', routesCards);
+app.post('/signup', celebrate({
+  body: Joi.object().keys({
+    email: Joi.string().required().email(),
+    password: Joi.string().required().min(8),
+    name: Joi.string().min(2).max(30),
+    about: Joi.string().min(2).max(30),
+    avatar: Joi.string().pattern(/https?:\/\/(.+?)\/(([a-zA-Z0-9_ \-%.]*)\.(jpg|png|jpeg|gif|webp))/),
+  }),
+}), createUser);
 
-app.use((req, res) => {
-  res.status(NOTFOUND_ERROR_CODE).send({ message: 'Страница не найдена' });
-});
+app.post('/signin', celebrate({
+  body: Joi.object().keys({
+    email: Joi.string().required().email(),
+    password: Joi.string().required().min(8),
+  }),
+}), login);
+
+app.use(auth);
+
+app.use('/users', usersRoutes);
+app.use('/cards', cardsRoutes);
+
+app.use(errors());
+
+app.use(handleErrors);
 
 app.listen(PORT);
