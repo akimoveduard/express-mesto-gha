@@ -6,7 +6,7 @@ const ErrorUnauthorized = require('../utils/errors/unauthorized');
 const userSchema = new mongoose.Schema({
   email: {
     type: String,
-    required: [true, 'Необходима электронная почта'],
+    required: [true, 'Необходима электронная почта.'],
     unique: true,
     validate: {
       validator: (email) => validator.isEmail(email),
@@ -21,13 +21,13 @@ const userSchema = new mongoose.Schema({
   name: {
     type: String,
     minlength: [2, 'Имя должно быть не короче 2-х символов.'],
-    maxlength: [30, 'Имя не должно быть длинее 30-и символов'],
+    maxlength: [30, 'Имя не должно быть длинее 30-и символов.'],
     default: 'Жак-Ив Кусто',
   },
   about: {
     type: String,
     minlength: [2, 'Текст не может быть короче 2-х символов.'],
-    maxlength: [30, 'Текст не может быть длиннее 30 символов'],
+    maxlength: [30, 'Текст не может быть длиннее 30 символов.'],
     default: 'Исследователь',
   },
   avatar: {
