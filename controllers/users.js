@@ -115,7 +115,7 @@ const updateUser = (req, res, next) => {
         next(new ErrorNotFound('Пользователь не найден.'));
         return;
       }
-      res.status(200).send(user)
+      res.status(200).send(user);
     })
     .catch((error) => {
       if (error.name === 'ValidationError') {
@@ -140,7 +140,7 @@ const updateAvatar = (req, res, next) => {
         next(new ErrorNotFound('Пользователь не найден.'));
         return;
       }
-      res.status(200).send(user)
+      res.status(200).send(user);
     })
     .catch((error) => {
       if (error.name === 'ValidationError') {
@@ -148,7 +148,7 @@ const updateAvatar = (req, res, next) => {
       }
     })
     .catch(next);
-}
+};
 
 module.exports = {
   createUser,

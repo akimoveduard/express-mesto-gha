@@ -13,7 +13,7 @@ const createCard = (req, res, next) => {
     })
     .catch((error) => {
       if (error.name === 'ValidationError') {
-        throw new ErrorBadRequest('Переданы некорректные данные для создания карточки.')
+        throw new ErrorBadRequest('Переданы некорректные данные для создания карточки.');
       }
     })
     .catch(next);
@@ -84,7 +84,7 @@ const deleteCard = (req, res, next) => {
         throw new ErrorForbidden('Нельзя удалять чужие карточки.');
       }
     })
-    .then((card) => {
+    .then(() => {
       res.status(200).send({ message: 'Карточка удалена.' });
     })
     .catch((error) => {
