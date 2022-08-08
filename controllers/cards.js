@@ -13,12 +13,7 @@ const createCard = (req, res, next) => {
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(VALIDATION_ERROR_CODE).send({
-          message: `400 — Переданы некорректные данные при создании карточки. ${Object.values(err.errors)
-            .map((error) => error.message)
-            .join(' ')}`,
-        });
-        return;
+        next(new ErrorBadRequest('Передан некорректный id карточки.'));
       }
     })
     .catch(next);
