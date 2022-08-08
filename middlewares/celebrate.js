@@ -18,7 +18,25 @@ const validateUserLogin = celebrate({
   }),
 });
 
+const validateCardPost = celebrate({
+  body: Joi.object().keys({
+    name: Joi.string().required().min(2).max(30),
+    link: Joi.string().required().pattern(imgUrlRegExp),
+  }),
+});
+
+const validateCardId = celebrate({
+  params: Joi.object().keys({
+    cardId: Joi.string().alphanum().length(24),
+  })
+    .messages({
+      'string.length': 'Длина id карточки должна быть 24 символа.',
+    }),
+});
+
 module.exports = {
   validateUserCreate,
   validateUserLogin,
+  validateCardPost,
+  validateCardId,
 };

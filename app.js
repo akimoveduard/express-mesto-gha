@@ -8,6 +8,8 @@ const { errors } = require('celebrate');
 const { validateUserCreate, validateUserLogin } = require('./middlewares/celebrate');
 
 const auth = require('./middlewares/auth');
+
+const ErrorNotFound = require('./utils/errors/not-found');
 const handleErrors = require('./middlewares/handle-errors');
 
 const usersRoutes = require('./routes/users');
@@ -36,6 +38,10 @@ app.use('/users', usersRoutes);
 app.use('/cards', cardsRoutes);
 
 app.use(errors());
+
+app.use ((req, res, next) => {
+  next(new ErrorNotFound('Такой страницы не существует.'));
+});
 
 app.use(handleErrors);
 
