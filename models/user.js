@@ -22,8 +22,8 @@ const userSchema = new mongoose.Schema({
   },
   name: {
     type: String,
-    minlength: [2, 'Имя должно быть не короче 2-х символов.'],
-    maxlength: [30, 'Имя не должно быть длинее 30-и символов.'],
+    minlength: [2, 'Имя не должно быть короче 2-х символов.'],
+    maxlength: [30, 'Имя не должно быть длиннее 30-и символов.'],
     default: 'Жак-Ив Кусто',
   },
   about: {

@@ -121,18 +121,15 @@ const updateUser = (req, res, next) => {
     },
   )
     .then((user) => {
-      if (!user) {
-        next(new ErrorNotFound('Пользователь не найден.'));
-        return;
-      }
       res.status(200).send(user);
     })
     .catch((error) => {
       if (error.name === 'ValidationError') {
-        throw new ErrorBadRequest('Некорректные данные для обновления профиля.');
+        next(new ErrorBadRequest('Некорректные данные для обновления профиля.'));
+        return;
       }
-    })
-    .catch(next);
+      next(error);
+    });
 };
 
 const updateAvatar = (req, res, next) => {
