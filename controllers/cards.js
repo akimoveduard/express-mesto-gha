@@ -11,10 +11,10 @@ const createCard = (req, res, next) => {
     .then((card) => {
       res.status(201).send(card);
     })
-    .catch((err) => {
+    .catch((error) => {
       if (err.name === 'ValidationError') {
         next(new ErrorBadRequest('Передан некорректный id карточки.'));
-      }
+      } else { next(error); }
     })
     .catch(next);
 };
@@ -22,7 +22,7 @@ const createCard = (req, res, next) => {
 const getCards = (req, res, next) => {
   Card.find({})
     .then((cards) => {
-      res.status(200).send(cards);
+      res.send(cards);
     })
     .catch(next);
 };
@@ -38,7 +38,7 @@ const likeCard = (req, res, next) => {
         next(new ErrorNotFound('С указанным id карточка не найдена.'));
         return;
       }
-      res.status(200).send(card);
+      res.send(card);
     })
     .catch((error) => {
       if (error.name === 'CastError') {
