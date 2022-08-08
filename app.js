@@ -2,15 +2,22 @@ const express = require('express');
 const mongoose = require('mongoose');
 
 const bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser');
 
-const {
-  NOTFOUND_ERROR_CODE,
-} = require('./utils/errors');
+const { errors } = require('celebrate');
+const { validateUserCreate, validateUserLogin } = require('./middlewares/celebrate');
 
-const routesUsers = require('./routes/users');
-const routesCards = require('./routes/cards');
+const auth = require('./middlewares/auth');
+
+const ErrorNotFound = require('./utils/errors/not-found');
+const handleErrors = require('./middlewares/handle-errors');
+
+const usersRoutes = require('./routes/users');
+const cardsRoutes = require('./routes/cards');
 
 const app = express();
+
+app.use(cookieParser());
 
 const { PORT = 3000 } = process.env;
 
@@ -19,19 +26,23 @@ mongoose.connect('mongodb://localhost:27017/mestodb');
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
+const { createUser, login } = require('./controllers/users');
+
+app.post('/signup', validateUserCreate, createUser);
+
+app.post('/signin', validateUserLogin, login);
+
+app.use(auth);
+
+app.use('/users', usersRoutes);
+app.use('/cards', cardsRoutes);
+
+app.use(errors());
+
 app.use((req, res, next) => {
-  req.user = {
-    _id: '62d59ec8cf56e951d6f7ed3a',
-  };
-  next();
+  next(new ErrorNotFound('Такой страницы не существует.'));
 });
 
-app.use('/users', routesUsers);
-
-app.use('/cards', routesCards);
-
-app.use((req, res) => {
-  res.status(NOTFOUND_ERROR_CODE).send({ message: 'Страница не найдена' });
-});
+app.use(handleErrors);
 
 app.listen(PORT);
