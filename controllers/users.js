@@ -2,7 +2,6 @@ const bcrypt = require('bcrypt');
 const User = require('../models/user');
 const getJwtToken = require('../utils/jwt');
 
-const ErrorBadRequest = require('../utils/errors/bad-request'); // 400
 const ErrorNotFound = require('../utils/errors/not-found'); // 404
 const ErrorConflict = require('../utils/errors/conflict'); // 409
 const ErrorUnauthorized = require('../utils/errors/unauthorized'); // 401
@@ -17,10 +16,6 @@ const createUser = (req, res, next) => {
     about,
     avatar,
   } = req.body;
-
-  if (!email || !password) {
-    throw new ErrorBadRequest('Не указаны почта или пароль.');
-  }
 
   bcrypt.hash(password, SALT_ROUNDS)
     .then((hash) => {
@@ -38,12 +33,10 @@ const createUser = (req, res, next) => {
           avatar: user.avatar,
         }))
         .catch((error) => {
-          if (error.name === 'ValidationError') {
-            next(new ErrorBadRequest('Переданы невалидные данные для регистрации пользователя.'));
-          }
-
-          if (error.code === 11000) {
+          if (error.name === 'MongoServerError' || error.code === 11000) {
             next(new ErrorConflict('Пользователь с такой почтой уже зарегистрирован.'));
+          } else {
+            next(error);
           }
         });
     })
@@ -51,11 +44,7 @@ const createUser = (req, res, next) => {
 };
 
 const login = (req, res, next) => {
-  const { email, password } = req.body;
-
-  if (!email || !password) {
-    throw new ErrorBadRequest('Не указаны почта или пароль.');
-  }
+  const { email } = req.body;
 
   User.findOne({ email })
     .select('+password')
@@ -66,13 +55,11 @@ const login = (req, res, next) => {
           maxage: 3600000 * 24 * 7,
           httpOnly: true,
         })
-        .status(200)
         .send({ message: 'Успешная авторизация.' });
     })
     .catch(() => {
       next(new ErrorUnauthorized('Неправильные почта или пароль.'));
-    })
-    .catch(next);
+    });
 };
 
 const getUsers = (req, res, next) => {
@@ -81,7 +68,7 @@ const getUsers = (req, res, next) => {
       if (users.length === 1) {
         throw new ErrorNotFound('Пользователи не найдены.');
       }
-      res.status(200).send(users);
+      res.send(users);
     })
     .catch(next);
 };
@@ -91,20 +78,14 @@ const getUser = (req, res, next) => {
     .then((user) => {
       if (!user) {
         next(new ErrorNotFound('Пользователь не найден.'));
-      }
-      res.send(user);
-    })
-    .catch((error) => {
-      if (error.name === 'CastError') throw new ErrorBadRequest('Некорректный id пользователя.');
+      } else res.send(user);
     })
     .catch(next);
 };
 
 const getCurrentUserInfo = (req, res, next) => {
   User.findById(req.user.payload)
-    .then((user) => {
-      res.status(200).send(user);
-    })
+    .then((user) => res.send(user))
     .catch(next);
 };
 
@@ -120,14 +101,9 @@ const updateUser = (req, res, next) => {
     },
   )
     .then((user) => {
-      res.status(200).send(user);
+      res.send(user);
     })
-    .catch((error) => {
-      if (error.name === 'ValidationError') {
-        next(new ErrorBadRequest('Некорректные данные для обновления профиля.'));
-      }
-      next(error);
-    });
+    .catch(next);
 };
 
 const updateAvatar = (req, res, next) => {
@@ -143,13 +119,7 @@ const updateAvatar = (req, res, next) => {
     .then((user) => {
       if (!user) {
         next(new ErrorNotFound('Пользователь не найден.'));
-      }
-      res.status(200).send(user);
-    })
-    .catch((error) => {
-      if (error.name === 'ValidationError') {
-        throw new ErrorBadRequest('Некорректные данные для обновления аватара.');
-      }
+      } else res.send(user);
     })
     .catch(next);
 };

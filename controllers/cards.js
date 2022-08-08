@@ -1,5 +1,4 @@
 const Card = require('../models/card');
-const ErrorBadRequest = require('../utils/errors/bad-request');
 const ErrorNotFound = require('../utils/errors/not-found');
 const ErrorForbidden = require('../utils/errors/forbidden');
 
@@ -8,22 +7,13 @@ const createCard = (req, res, next) => {
   const owner = req.user.payload;
 
   Card.create({ name, link, owner })
-    .then((card) => {
-      res.status(201).send(card);
-    })
-    .catch((error) => {
-      if (err.name === 'ValidationError') {
-        next(new ErrorBadRequest('Передан некорректный id карточки.'));
-      } else { next(error); }
-    })
+    .then((card) => res.status(201).send(card))
     .catch(next);
 };
 
 const getCards = (req, res, next) => {
   Card.find({})
-    .then((cards) => {
-      res.send(cards);
-    })
+    .then((cards) => res.send(cards))
     .catch(next);
 };
 
@@ -33,18 +23,8 @@ const likeCard = (req, res, next) => {
     { $addToSet: { likes: req.user.payload } },
     { new: true },
   )
-    .then((card) => {
-      if (!card) {
-        next(new ErrorNotFound('С указанным id карточка не найдена.'));
-        return;
-      }
-      res.send(card);
-    })
-    .catch((error) => {
-      if (error.name === 'CastError') {
-        throw new ErrorBadRequest('Передан некорректный id карточки.');
-      }
-    })
+    .orFail(() => new ErrorNotFound('Карточка не найдена.'))
+    .then((card) => res.send(card))
     .catch(next);
 };
 
@@ -54,38 +34,20 @@ const deleteLike = (req, res, next) => {
     { $pull: { likes: req.user.payload } },
     { new: true },
   )
-    .then((card) => {
-      if (!card) {
-        next(new ErrorNotFound('Карточка не найдена.'));
-        return;
-      }
-      res.status(200).send(card);
-    })
-    .catch((error) => {
-      if (error.name === 'CastError') {
-        throw new ErrorBadRequest('Передан некорректный id карточки.');
-      }
-    })
+    .orFail(() => new ErrorNotFound('Карточка не найдена.'))
+    .then((card) => res.status(200).send(card))
     .catch(next);
 };
 
 const deleteCard = (req, res, next) => {
   Card.findById(req.params.cardId)
+    .orFail(() => new ErrorNotFound('Карточка не найдена.'))
     .then((card) => {
-      if (!card) {
-        next(new ErrorNotFound('Карточка не найдена.'));
+      if (JSON.stringify(card.owner) !== JSON.stringify(req.user.payload)) {
+        return next(new ErrorForbidden('Нельзя удалять чужие карточки.'));
       }
-      if (JSON.stringify(card.owner) === JSON.stringify(req.user.payload)) {
-        card.remove();
-        res.status(200).send({ message: 'Карточка удалена.' });
-      } else {
-        next(new ErrorForbidden('Нельзя удалять чужие карточки.'));
-      }
-    })
-    .catch((error) => {
-      if (error.name === 'CastError') {
-        throw new ErrorBadRequest('Передан некорректный id карточки.');
-      }
+      return card.remove()
+        .then(() => res.send({ message: 'Карточка удалена.' }));
     })
     .catch(next);
 };
