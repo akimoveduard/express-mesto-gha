@@ -12,6 +12,8 @@ const handleErrors = require('./middlewares/handle-errors');
 const usersRoutes = require('./routes/users');
 const cardsRoutes = require('./routes/cards');
 
+const { imgUrlRegExp } = require('./utils/regexp');
+
 const app = express();
 
 app.use(cookieParser());
@@ -31,7 +33,7 @@ app.post('/signup', celebrate({
     password: Joi.string().required().min(8),
     name: Joi.string().min(2).max(30),
     about: Joi.string().min(2).max(30),
-    avatar: Joi.string().pattern(/^(https?):\/\/(www.)?([-.~:\/?#\[\]@!$&'()*\+,;=\w])+$/),
+    avatar: Joi.string().pattern(imgUrlRegExp),
   }),
 }), createUser);
 

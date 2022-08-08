@@ -1,7 +1,8 @@
 const mongoose = require('mongoose');
 
-// eslint-disable-next-line
 const validator = require('validator');
+
+const { imgUrlRegExp } = require('../utils/regexp');
 
 const cardSchema = new mongoose.Schema({
   name: {
@@ -14,9 +15,7 @@ const cardSchema = new mongoose.Schema({
     type: String,
     required: true,
     validate: {
-      validator(avatar) {
-        return /http:\/\/(.+?)\/(([a-zA-Z0-9_ \-%.]*)\.(jpg|png|jpeg|gif|webp))/.test(avatar);
-      },
+      validator: (image) => imgUrlRegExp.test(image),
       message: 'Неверный url изображения.',
     },
   },
