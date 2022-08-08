@@ -36,6 +36,7 @@ const likeCard = (req, res, next) => {
     .then((card) => {
       if (!card) {
         next(new ErrorNotFound('С указанным id карточка не найдена.'));
+        return;
       }
       res.status(200).send(card);
     })
@@ -56,6 +57,7 @@ const deleteLike = (req, res, next) => {
     .then((card) => {
       if (!card) {
         next(new ErrorNotFound('Карточка не найдена.'));
+        return;
       }
       res.status(200).send(card);
     })
