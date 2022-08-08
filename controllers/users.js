@@ -91,7 +91,6 @@ const getUser = (req, res, next) => {
     .then((user) => {
       if (!user) {
         next(new ErrorNotFound('Пользователь не найден.'));
-        return;
       }
       res.status(200).send(user);
     })
@@ -126,7 +125,6 @@ const updateUser = (req, res, next) => {
     .catch((error) => {
       if (error.name === 'ValidationError') {
         next(new ErrorBadRequest('Некорректные данные для обновления профиля.'));
-        return;
       }
       next(error);
     });
@@ -145,7 +143,6 @@ const updateAvatar = (req, res, next) => {
     .then((user) => {
       if (!user) {
         next(new ErrorNotFound('Пользователь не найден.'));
-        return;
       }
       res.status(200).send(user);
     })

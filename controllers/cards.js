@@ -36,7 +36,6 @@ const likeCard = (req, res, next) => {
     .then((card) => {
       if (!card) {
         next(new ErrorNotFound('С указанным id карточка не найдена.'));
-        return;
       }
       res.status(200).send(card);
     })
@@ -57,7 +56,6 @@ const deleteLike = (req, res, next) => {
     .then((card) => {
       if (!card) {
         next(new ErrorNotFound('Карточка не найдена.'));
-        return;
       }
       res.status(200).send(card);
     })
@@ -74,16 +72,13 @@ const deleteCard = (req, res, next) => {
     .then((card) => {
       if (!card) {
         next(new ErrorNotFound('Карточка не найдена.'));
-        return;
       }
       if (JSON.stringify(card.owner) === JSON.stringify(req.user.payload)) {
         card.remove();
+        res.status(200).send({ message: 'Карточка удалена.' });
       } else {
-        throw new ErrorForbidden('Нельзя удалять чужие карточки.');
+        next(new ErrorForbidden('Нельзя удалять чужие карточки.'));
       }
-    })
-    .then(() => {
-      res.status(200).send({ message: 'Карточка удалена.' });
     })
     .catch((error) => {
       if (error.name === 'CastError') {
