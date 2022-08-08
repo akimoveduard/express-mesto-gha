@@ -5,7 +5,7 @@ const getJwtToken = require('../utils/jwt');
 const ErrorBadRequest = require('../utils/errors/bad-request'); // 400
 const ErrorNotFound = require('../utils/errors/not-found'); // 404
 const ErrorConflict = require('../utils/errors/conflict'); // 409
-const ErrorUnauthorized = require('../utils/errors/unauthorized');
+const ErrorUnauthorized = require('../utils/errors/unauthorized'); // 401
 
 const SALT_ROUNDS = 10;
 
