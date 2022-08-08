@@ -1,5 +1,4 @@
 const Card = require('../models/card');
-const ErrorBadRequest = require('../utils/errors/bad-request');
 const ErrorNotFound = require('../utils/errors/not-found');
 const ErrorForbidden = require('../utils/errors/forbidden');
 
@@ -10,11 +9,6 @@ const createCard = (req, res, next) => {
   Card.create({ name, link, owner })
     .then((card) => {
       res.status(201).send(card);
-    })
-    .catch((error) => {
-      if (err.name === 'ValidationError') {
-        next(new ErrorBadRequest('Передан некорректный id карточки.'));
-      } else { next(error); }
     })
     .catch(next);
 };
@@ -40,11 +34,6 @@ const likeCard = (req, res, next) => {
       }
       res.send(card);
     })
-    .catch((error) => {
-      if (error.name === 'CastError') {
-        throw new ErrorBadRequest('Передан некорректный id карточки.');
-      }
-    })
     .catch(next);
 };
 
@@ -61,11 +50,6 @@ const deleteLike = (req, res, next) => {
       }
       res.status(200).send(card);
     })
-    .catch((error) => {
-      if (error.name === 'CastError') {
-        throw new ErrorBadRequest('Передан некорректный id карточки.');
-      }
-    })
     .catch(next);
 };
 
@@ -80,11 +64,6 @@ const deleteCard = (req, res, next) => {
         res.status(200).send({ message: 'Карточка удалена.' });
       } else {
         next(new ErrorForbidden('Нельзя удалять чужие карточки.'));
-      }
-    })
-    .catch((error) => {
-      if (error.name === 'CastError') {
-        throw new ErrorBadRequest('Передан некорректный id карточки.');
       }
     })
     .catch(next);
