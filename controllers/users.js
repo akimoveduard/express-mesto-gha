@@ -92,7 +92,7 @@ const getUser = (req, res, next) => {
       if (!user) {
         next(new ErrorNotFound('Пользователь не найден.'));
       }
-      res.status(200).send(user);
+      res.send(user);
     })
     .catch((error) => {
       if (error.name === 'CastError') throw new ErrorBadRequest('Некорректный id пользователя.');
