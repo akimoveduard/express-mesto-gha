@@ -6,19 +6,13 @@ const ErrorForbidden = require('../utils/errors/forbidden');
 const createCard = (req, res, next) => {
   const { name, link } = req.body;
   const owner = req.user.payload;
-
   Card.create({ name, link, owner })
     .then((card) => {
       res.status(201).send(card);
     })
-    .catch((err) => {
-      if (err.name === 'ValidationError') {
-        res.status(VALIDATION_ERROR_CODE).send({
-          message: `400 — Переданы некорректные данные при создании карточки. ${Object.values(err.errors)
-            .map((error) => error.message)
-            .join(' ')}`,
-        });
-        return;
+    .catch((error) => {
+      if (error.name === 'ValidationError') {
+        throw new ErrorBadRequest('Переданы некорректные данные для создания карточки.');
       }
     })
     .catch(next);
