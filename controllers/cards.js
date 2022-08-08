@@ -46,7 +46,7 @@ const deleteCard = (req, res, next) => {
       if (JSON.stringify(card.owner) !== JSON.stringify(req.user.payload)) {
         return next(new ErrorForbidden('Нельзя удалять чужие карточки.'));
       }
-      return card.remove
+      return card.remove()
         .then(() => res.send({ message: 'Карточка удалена.' }));
     })
     .catch(next);
