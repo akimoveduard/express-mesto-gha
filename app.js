@@ -39,7 +39,7 @@ app.use('/cards', cardsRoutes);
 
 app.use(errors());
 
-app.use ((req, res, next) => {
+app.use((req, res, next) => {
   next(new ErrorNotFound('Такой страницы не существует.'));
 });
 
