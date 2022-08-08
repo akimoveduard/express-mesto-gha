@@ -1,4 +1,4 @@
-const imgUrlRegExp = /^https?://([a-z0-9\-]+\.)+[a-z]{2,6}(?:/[^/#?]+)+\.(?:jpg|jpeg|gif|png|wepb)$/gi;
+const imgUrlRegExp = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\\+.~#?&//=]*)/;
 
 module.exports = {
   imgUrlRegExp,
