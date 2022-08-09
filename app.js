@@ -29,8 +29,10 @@ app.use(bodyParser.urlencoded({ extended: true }));
 const { createUser, login } = require('./controllers/users');
 
 app.post('/signup', validateUserCreate, createUser);
-
 app.post('/signin', validateUserLogin, login);
+app.get('/signout', (req, res) => {
+  res.clearCookie('jwt').send({ message: 'Выход.' });
+});
 
 app.use(auth);
 

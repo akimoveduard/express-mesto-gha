@@ -1,4 +1,6 @@
 const Card = require('../models/card');
+
+const ErrorBadRequest = require('../utils/errors/bad-request');
 const ErrorNotFound = require('../utils/errors/not-found');
 const ErrorForbidden = require('../utils/errors/forbidden');
 
@@ -8,7 +10,13 @@ const createCard = (req, res, next) => {
 
   Card.create({ name, link, owner })
     .then((card) => res.status(201).send(card))
-    .catch(next);
+    .catch((error) => {
+      if (error.name === 'ValidationError') {
+        next(new ErrorBadRequest('Переданы некорректные данные для создания карточки.'));
+      } else {
+        next(error);
+      }
+    });
 };
 
 const getCards = (req, res, next) => {
