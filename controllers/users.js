@@ -2,9 +2,10 @@ const bcrypt = require('bcrypt');
 const User = require('../models/user');
 const getJwtToken = require('../utils/jwt');
 
+const ErrorBadRequest = require('../utils/errors/bad-request'); // 400
+const ErrorUnauthorized = require('../utils/errors/unauthorized'); // 401
 const ErrorNotFound = require('../utils/errors/not-found'); // 404
 const ErrorConflict = require('../utils/errors/conflict'); // 409
-const ErrorUnauthorized = require('../utils/errors/unauthorized'); // 401
 
 const SALT_ROUNDS = 10;
 
@@ -35,6 +36,8 @@ const createUser = (req, res, next) => {
         .catch((error) => {
           if (error.name === 'MongoServerError' || error.code === 11000) {
             next(new ErrorConflict('Пользователь с такой почтой уже зарегистрирован.'));
+          } else if (error.name === 'ValidationError') {
+            next(new ErrorBadRequest('Переданы неккоректные данные для создания пользователя.'));
           } else {
             next(error);
           }
@@ -103,7 +106,13 @@ const updateUser = (req, res, next) => {
     .then((user) => {
       res.send(user);
     })
-    .catch(next);
+    .catch((error) => {
+      if (error.name === 'ValidationError') {
+        next(new ErrorBadRequest('Передан некорректный id пользователя.'));
+      } else {
+        next(error);
+      }
+    });
 };
 
 const updateAvatar = (req, res, next) => {
@@ -121,7 +130,13 @@ const updateAvatar = (req, res, next) => {
         next(new ErrorNotFound('Пользователь не найден.'));
       } else res.send(user);
     })
-    .catch(next);
+    .catch((error) => {
+      if (error.name === 'ValidationError') {
+        next(new ErrorBadRequest('Передан некорректный id пользователя.'));
+      } else {
+        next(error);
+      }
+    });
 };
 
 module.exports = {
